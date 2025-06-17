@@ -54,7 +54,7 @@ vercel exec -- python manage.py migrate
 ### Option B: Create a migration endpoint (temporary)
 Add this to your Django views for one-time setup:
 
-```python
+\`\`\`python
 from django.http import JsonResponse
 from django.core.management import call_command
 
