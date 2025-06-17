@@ -1,7 +1,5 @@
 import logging
-from django.shortcuts import render
 from django.utils import timezone
-from django.http import JsonResponse
 from rest_framework import viewsets, filters, status
 from rest_framework.permissions import AllowAny
 from rest_framework.decorators import api_view, permission_classes
@@ -24,7 +22,7 @@ logger = logging.getLogger(__name__)
 def health_check(request):
     """Health check endpoint to verify API connectivity"""
     try:
-        # Test database connection
+        # Simple database test
         client_count = Client.objects.count()
         return Response({
             'status': 'healthy',
@@ -34,12 +32,11 @@ def health_check(request):
             'client_count': client_count
         })
     except Exception as e:
-        logger.error(f"Health check failed: {str(e)}")
         return Response({
             'status': 'error',
-            'message': f'Database connection failed: {str(e)}',
+            'message': f'Error: {str(e)}',
             'version': '1.0.0',
-            'database': 'disconnected'
+            'database': 'error'
         }, status=500)
 
 @api_view(['GET'])
@@ -64,7 +61,6 @@ def dashboard_summary(request):
             'completed_this_month': completed_this_month,
         })
     except Exception as e:
-        logger.error(f"Dashboard summary failed: {str(e)}")
         return Response({
             'total_clients': 0,
             'active_applications': 0,
@@ -74,7 +70,6 @@ def dashboard_summary(request):
         }, status=500)
 
 class ClientViewSet(viewsets.ModelViewSet):
-    """API endpoint for managing clients"""
     queryset = Client.objects.all()
     serializer_class = ClientSerializer
     permission_classes = [AllowAny]
@@ -84,7 +79,6 @@ class ClientViewSet(viewsets.ModelViewSet):
     ordering_fields = ['created_at', 'updated_at', 'name']
 
 class ApplicationViewSet(viewsets.ModelViewSet):
-    """API endpoint for managing applications"""
     queryset = Application.objects.all()
     serializer_class = ApplicationSerializer
     permission_classes = [AllowAny]
@@ -94,7 +88,6 @@ class ApplicationViewSet(viewsets.ModelViewSet):
     ordering_fields = ['created_at', 'updated_at', 'submitted_date']
 
 class DocumentViewSet(viewsets.ModelViewSet):
-    """API endpoint for managing documents"""
     queryset = Document.objects.all()
     serializer_class = DocumentSerializer
     permission_classes = [AllowAny]
@@ -104,7 +97,6 @@ class DocumentViewSet(viewsets.ModelViewSet):
     ordering_fields = ['uploaded_at']
 
 class TaskViewSet(viewsets.ModelViewSet):
-    """API endpoint for managing tasks"""
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
     permission_classes = [AllowAny]
@@ -114,7 +106,6 @@ class TaskViewSet(viewsets.ModelViewSet):
     ordering_fields = ['created_at', 'due_date', 'priority']
 
 class ReminderViewSet(viewsets.ModelViewSet):
-    """API endpoint for managing reminders"""
     queryset = Reminder.objects.all()
     serializer_class = ReminderSerializer
     permission_classes = [AllowAny]
@@ -124,7 +115,6 @@ class ReminderViewSet(viewsets.ModelViewSet):
     ordering_fields = ['reminder_date', 'created_at']
 
 class InterviewScriptViewSet(viewsets.ModelViewSet):
-    """API endpoint for managing interview scripts"""
     queryset = InterviewScript.objects.all()
     permission_classes = [AllowAny]
     filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
@@ -138,7 +128,6 @@ class InterviewScriptViewSet(viewsets.ModelViewSet):
         return InterviewScriptSerializer
 
 class ScriptSectionViewSet(viewsets.ModelViewSet):
-    """API endpoint for managing script sections"""
     queryset = ScriptSection.objects.all()
     serializer_class = ScriptSectionSerializer
     permission_classes = [AllowAny]

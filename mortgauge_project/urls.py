@@ -19,6 +19,8 @@ from django.urls import path, include
 from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
+from rest_framework.routers import DefaultRouter
+from broker_operations import views
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -30,9 +32,21 @@ schema_view = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
+# Create a router and register our viewsets with it.
+router = DefaultRouter()
+router.register(r'clients', views.ClientViewSet)
+router.register(r'applications', views.ApplicationViewSet)
+router.register(r'documents', views.DocumentViewSet)
+router.register(r'tasks', views.TaskViewSet)
+router.register(r'reminders', views.ReminderViewSet)
+router.register(r'scripts', views.InterviewScriptViewSet)
+router.register(r'script-sections', views.ScriptSectionViewSet)
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/', include('broker_operations.urls')),
+    path('api/', include(router.urls)),
+    path('api/health/', views.health_check, name='health_check'),
+    path('api/dashboard/summary/', views.dashboard_summary, name='dashboard_summary'),
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
