@@ -39,7 +39,8 @@ export function Sidebar() {
         {!collapsed && (
           <div className="flex items-center space-x-2">
             <Building2 className="h-8 w-8 text-primary" />
-            <span className="text-xl font-bold">MortgageHub</span>
+            <span className="text-xl font-bold">Mortgauge
+</span>
           </div>
         )}
         <Button variant="ghost" size="sm" onClick={() => setCollapsed(!collapsed)} className="ml-auto">
